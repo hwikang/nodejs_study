@@ -12,7 +12,9 @@ app.listen(3000,function(){
 app.get('/topic/new',function(req,res){
     res.render('new')
 })
-
+app.get('/topic',function(req,res){
+    
+})
 app.post('/topic',function(req,res){
    let title =req.body.title;
    let description = req.body.description;
