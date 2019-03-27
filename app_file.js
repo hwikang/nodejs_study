@@ -10,11 +10,40 @@ app.listen(3000,function(){
 })
 
 app.get('/topic/new',function(req,res){
-    res.render('new')
+    fs.readdir('data',function(err,files){
+        if(err){
+            console.log(err);
+        }
+        res.render('new',{topics:files})
+    });
+   
 })
-app.get('/topic',function(req,res){
+app.get(['/topic','/topic/:id' ],function(req,res){
+   
+    fs.readdir('data',function(err,files){
+        if(err){
+            console.log(err);
+            res.status(500).send('internal server error readdir');
+        }
+        
+
+        let id = req.params.id
+        if(id){
+            fs.readFile('data/'+id,'utf8',function(err, data){
+                if(err){
+                    console.log(err);
+                    res.status(500).send('internal server error readfile');
+                }
+                res.render('view',{topics:files,title:id,description:data});
+            });
+        }else{
+            res.render('view',{topics:files , title:"welcome",description:"to node js"});
+        }
+    });
     
-})
+});
+
+
 app.post('/topic',function(req,res){
    let title =req.body.title;
    let description = req.body.description;
@@ -23,7 +52,7 @@ app.post('/topic',function(req,res){
             console.log(err)
             res.status(500).send('internal server error')
         }
-        res.send('success')
+        res.redirect('/topic/'+title)
     });
 
 });
